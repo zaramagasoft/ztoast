@@ -13,6 +13,11 @@ int main(void)
         return EXIT_FAILURE;
     }
     printf("Init OK\n");
+    while (1)
+    {
+        zwl_dispatch(&ctx);
+    }
+
     zwl_destroy(&ctx);
 
     return EXIT_SUCCESS;
