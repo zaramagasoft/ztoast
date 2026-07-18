@@ -10,7 +10,7 @@
 #include "wlr-layer-shell-unstable-v1.h"
 
 #include <sys/mman.h>
-
+#include <cairo/cairo.h>
 
 struct zwl_context
 {
@@ -32,7 +32,11 @@ struct zwl_context
     struct wl_shm_pool *pool;
     struct wl_buffer *buffer;
 
-     bool shm_ready;
+    bool shm_ready;
+    bool cairo_ready;
+
+    cairo_surface_t *cairo_surface;
+    cairo_t *cr;
 };
 
 int zwl_init(struct zwl_context *ctx);

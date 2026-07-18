@@ -1,7 +1,7 @@
 CC = gcc
 
-PKG_CFLAGS := $(shell pkg-config --cflags wayland-client)
-PKG_LIBS   := $(shell pkg-config --libs wayland-client)
+PKG_CFLAGS := $(shell pkg-config --cflags wayland-client cairo)
+PKG_LIBS   := $(shell pkg-config --libs wayland-client cairo)
 
 CFLAGS = -Wall -Wextra -std=c17 -g -Iinclude -Iprotocol $(PKG_CFLAGS)
 
@@ -11,6 +11,7 @@ SRC = \
 	src/main.c \
 	src/way.c \
 	src/shm.c \
+	src/cairo_render.c \
 	protocol/xdg-shell.c \
 	protocol/wlr-layer-shell-unstable-v1.c
 

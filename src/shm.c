@@ -87,23 +87,6 @@ int zwl_shm_init(struct zwl_context *ctx, int width, int height)
     }
 
     printf("wl_buffer creado correctamente.\n");
-    uint32_t *pixels = ctx->pixels;
-
-    for (size_t i = 0; i < (ctx->shm_size / 4); i++)
-    {
-        pixels[i] = 0xFFFF0000;
-    }
-    wl_surface_attach(
-        ctx->surface,
-        ctx->buffer,
-        0,
-        0);
-    wl_surface_damage_buffer(
-        ctx->surface,
-        0,
-        0,
-        INT32_MAX,
-        INT32_MAX);
-    wl_surface_commit(ctx->surface);    
+    
     return 0;
 }

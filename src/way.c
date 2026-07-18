@@ -27,6 +27,7 @@
 
 #include "way.h"
 #include "shm.h"
+#include "cairo_render.h"
 /*
  * ---------------------------------------------------------------------------
  * registry_global()
@@ -127,6 +128,27 @@ layer_surface_configure(void *data,
 
         ctx->shm_ready = true;
     }
+    if (!ctx->cairo_ready)
+    {
+        if (zwl_cairo_init(ctx, width, height) != 0)
+            return;
+
+        ctx->cairo_ready = true;
+    }
+    zwl_cairo_draw(ctx);
+
+    wl_surface_attach(ctx->surface,
+                      ctx->buffer,
+                      0,
+                      0);
+
+    wl_surface_damage_buffer(ctx->surface,
+                             0,
+                             0,
+                             width,
+                             height);
+
+    wl_surface_commit(ctx->surface);
 }
 static void
 layer_surface_closed(void *data,
