@@ -9,6 +9,9 @@
 #include "xdg-shell.h"
 #include "wlr-layer-shell-unstable-v1.h"
 
+#include <sys/mman.h>
+
+
 struct zwl_context
 {
     struct wl_display *display;
@@ -21,6 +24,15 @@ struct zwl_context
 
     struct wl_surface *surface;
     struct zwlr_layer_surface_v1 *layer_surface;
+
+    int shm_fd;
+    void *pixels;
+    size_t shm_size;
+
+    struct wl_shm_pool *pool;
+    struct wl_buffer *buffer;
+
+     bool shm_ready;
 };
 
 int zwl_init(struct zwl_context *ctx);
@@ -28,6 +40,5 @@ int zwl_init(struct zwl_context *ctx);
 void zwl_dispatch(struct zwl_context *ctx);
 
 void zwl_destroy(struct zwl_context *ctx);
-
 
 #endif /* WAY_H */

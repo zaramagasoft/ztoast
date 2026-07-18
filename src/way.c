@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "way.h"
+#include "shm.h"
 /*
  * ---------------------------------------------------------------------------
  * registry_global()
@@ -115,6 +116,17 @@ layer_surface_configure(void *data,
     printf("Size  : %ux%u\n", width, height);
 
     zwlr_layer_surface_v1_ack_configure(layer_surface, serial);
+    /* Crear SHM solo la primera vez */
+    if (!ctx->shm_ready)
+    {
+        if (zwl_shm_init(ctx, width, height) != 0)
+        {
+            fprintf(stderr, "Error inicializando SHM\n");
+            return;
+        }
+
+        ctx->shm_ready = true;
+    }
 }
 static void
 layer_surface_closed(void *data,
@@ -182,7 +194,7 @@ int zwl_init(struct zwl_context *ctx)
      * objetos globales antes de continuar la inicialización.
      */
     wl_display_roundtrip(ctx->display);
-    //wl_display_roundtrip(ctx->display);
+    // wl_display_roundtrip(ctx->display);
     if (!ctx->compositor)
     {
         fprintf(stderr, "Error: wl_compositor no disponible\n");
@@ -250,7 +262,7 @@ int zwl_init(struct zwl_context *ctx)
         0); // left
     // nuestros amigos commit y roundtrip para que el compositor procese los cambios
     wl_surface_commit(ctx->surface);
-    //wl_display_roundtrip(ctx->display);
+    // wl_display_roundtrip(ctx->display);
     return 0;
 }
 void zwl_destroy(struct zwl_context *ctx)

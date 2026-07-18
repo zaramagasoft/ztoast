@@ -3,6 +3,10 @@
 
 #include "way.h"
 
+#define _GNU_SOURCE
+
+#include "shm.h"
+
 int main(void)
 {
     struct zwl_context ctx;
