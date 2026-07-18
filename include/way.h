@@ -12,6 +12,10 @@
 #include <sys/mman.h>
 #include <cairo/cairo.h>
 
+//#include "nuklear.h"
+//declaracion adelantada de struct nk_context
+struct nk_context;
+
 struct zwl_context
 {
     struct wl_display *display;
@@ -37,6 +41,8 @@ struct zwl_context
 
     cairo_surface_t *cairo_surface;
     cairo_t *cr;
+
+    struct nk_context *nk;
 };
 
 int zwl_init(struct zwl_context *ctx);
@@ -44,5 +50,7 @@ int zwl_init(struct zwl_context *ctx);
 void zwl_dispatch(struct zwl_context *ctx);
 
 void zwl_destroy(struct zwl_context *ctx);
+
+void zwl_render(struct zwl_context *ctx);
 
 #endif /* WAY_H */

@@ -37,25 +37,20 @@ int zwl_cairo_init(struct zwl_context *ctx,
 
     return 0;
 }
-void zwl_cairo_draw(struct zwl_context *ctx)
+void
+zwl_draw_background(struct zwl_context *ctx)
 {
-    /* Fondo */
-
-   /*  cairo_set_source_rgb(ctx->cr,
-                         0.15,
-                         0.15,
-                         0.15);
- */
-   cairo_set_source_rgba(ctx->cr,
-                      0.039,
-                      0.059,
-                      0.039,
-                      0.650);
+    cairo_set_source_rgba(ctx->cr,
+                          0.039,
+                          0.059,
+                          0.039,
+                          0.650);
 
     cairo_paint(ctx->cr);
-
-    /* Texto */
-
+}
+void
+zwl_draw_text(struct zwl_context *ctx)
+{
     cairo_select_font_face(
         ctx->cr,
         "3270 Nerd Font Propo",
@@ -65,10 +60,9 @@ void zwl_cairo_draw(struct zwl_context *ctx)
     cairo_set_font_size(ctx->cr, 28);
 
     cairo_set_source_rgb(ctx->cr,
-                     0.20,
-                     1.00,
-                     0.20);
-
+                         0.20,
+                         1.00,
+                         0.20);
 
     cairo_move_to(ctx->cr,
                   30,
@@ -76,6 +70,13 @@ void zwl_cairo_draw(struct zwl_context *ctx)
 
     cairo_show_text(ctx->cr,
                     "Hola Cairo");
+}
+void
+zwl_cairo_draw(struct zwl_context *ctx)
+{
+    zwl_draw_background(ctx);
+
+    zwl_draw_text(ctx);
 
     cairo_surface_flush(ctx->cairo_surface);
 }

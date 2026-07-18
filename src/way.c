@@ -28,6 +28,7 @@
 #include "way.h"
 #include "shm.h"
 #include "cairo_render.h"
+#include "nuklear_wayland.h"
 /*
  * ---------------------------------------------------------------------------
  * registry_global()
@@ -110,24 +111,21 @@ layer_surface_configure(void *data,
                         uint32_t height)
 {
     struct zwl_context *ctx = data;
-    (void)ctx;
 
     printf("Configure recibido\n");
     printf("Serial: %u\n", serial);
     printf("Size  : %ux%u\n", width, height);
 
     zwlr_layer_surface_v1_ack_configure(layer_surface, serial);
-    /* Crear SHM solo la primera vez */
+
     if (!ctx->shm_ready)
     {
         if (zwl_shm_init(ctx, width, height) != 0)
-        {
-            fprintf(stderr, "Error inicializando SHM\n");
             return;
-        }
 
         ctx->shm_ready = true;
     }
+
     if (!ctx->cairo_ready)
     {
         if (zwl_cairo_init(ctx, width, height) != 0)
@@ -135,20 +133,12 @@ layer_surface_configure(void *data,
 
         ctx->cairo_ready = true;
     }
-    zwl_cairo_draw(ctx);
-
-    wl_surface_attach(ctx->surface,
-                      ctx->buffer,
-                      0,
-                      0);
-
-    wl_surface_damage_buffer(ctx->surface,
-                             0,
-                             0,
-                             width,
-                             height);
-
-    wl_surface_commit(ctx->surface);
+    if (!ctx->nk)
+    {
+        if (zwl_nk_init(ctx) != 0)
+            return;
+    }
+    zwl_render(ctx);
 }
 static void
 layer_surface_closed(void *data,
@@ -290,4 +280,21 @@ int zwl_init(struct zwl_context *ctx)
 void zwl_destroy(struct zwl_context *ctx)
 {
     (void)ctx;
+}
+void zwl_render(struct zwl_context *ctx)
+{
+    zwl_cairo_draw(ctx);
+
+    /* Genera los comandos de Nuklear */
+    zwl_nk_render(ctx);
+
+    wl_surface_attach(ctx->surface, ctx->buffer, 0, 0);
+
+    wl_surface_damage_buffer(ctx->surface,
+                             0,
+                             0,
+                             INT32_MAX,
+                             INT32_MAX);
+
+    wl_surface_commit(ctx->surface);
 }

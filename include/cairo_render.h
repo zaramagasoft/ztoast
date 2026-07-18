@@ -11,4 +11,8 @@ void zwl_cairo_destroy(struct zwl_context *ctx);
 
 void zwl_cairo_draw(struct zwl_context *ctx);
 
+/* Primitivas de dibujo */
+void zwl_draw_background(struct zwl_context *ctx);
+void zwl_draw_text(struct zwl_context *ctx);
+
 #endif
